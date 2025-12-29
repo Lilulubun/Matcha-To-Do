@@ -45,10 +45,12 @@ fun MatchaApp() {
             GoalCreationScreen(
                 onBack = { navController.popBackStack() },
                 onContinue = { goalName ->
-                    navController.navigate("add_tasks/$goalName")
+                    tempGoalName = goalName          // 👈 store first
+                    navController.navigate("addTask") // 👈 correct route
                 }
             )
         }
+
 
         // --- ADD TASKS ---
         composable("addTask") {
@@ -62,6 +64,7 @@ fun MatchaApp() {
                 }
             )
         }
+
         composable("review") {
             ReviewGoalScreen(
                 goalName = tempGoalName,
