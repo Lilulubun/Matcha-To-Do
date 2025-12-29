@@ -3,6 +3,9 @@ package com.example.matchatodo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +21,9 @@ fun MatchaApp() {
     // 1. Observe the list of goals from the ViewModel
     // Note: This assumes your viewModel has a 'goals' StateFlow or MutableState
     val goals by viewModel.goals.collectAsState()
+    var tempGoalName by remember { mutableStateOf("") }
+    var tempTasks by remember { mutableStateOf<List<String>>(emptyList()) }
+
 
     NavHost(navController = navController, startDestination = "dashboard") {
 
@@ -38,10 +44,34 @@ fun MatchaApp() {
         composable("create") {
             GoalCreationScreen(
                 onBack = { navController.popBackStack() },
-                onSave = { name, tasks ->
-                    // Call the ViewModel function to add data
-                    viewModel.addGoal(name, tasks)
-                    navController.popBackStack()
+                onContinue = { goalName ->
+                    navController.navigate("add_tasks/$goalName")
+                }
+            )
+        }
+
+        // --- ADD TASKS ---
+        composable("addTask") {
+            AddTaskScreen(
+                goalName = tempGoalName,
+                onBack = { navController.popBackStack() },
+                onStartBrewing = { name, tasks ->
+                    tempGoalName = name
+                    tempTasks = tasks
+                    navController.navigate("review")
+                }
+            )
+        }
+        composable("review") {
+            ReviewGoalScreen(
+                goalName = tempGoalName,
+                tasks = tempTasks,
+                onBack = { navController.popBackStack() },
+                onStartGoal = {
+                    viewModel.addGoal(tempGoalName, tempTasks)
+                    navController.navigate("dashboard") {
+                        popUpTo("dashboard") { inclusive = true }
+                    }
                 }
             )
         }
