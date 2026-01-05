@@ -105,6 +105,7 @@ fun MatchaApp() {
         // --- REWARD ---
         composable("reward") {
             RewardScreen(
+                goalName = tempGoalName,
                 onBackToHome = {
                     navController.navigate("dashboard") {
                         popUpTo("dashboard") { inclusive = true }
