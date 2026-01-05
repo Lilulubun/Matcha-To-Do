@@ -11,10 +11,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.List // Standard Icon (Fixes TrackChanges)
-import androidx.compose.material.icons.filled.Star // Standard Icon (Fixes EmojiEvents)
-import androidx.compose.material3.* // Fixes "Unresolved reference: Text/Card"
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,18 +22,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.matchatodo.data.Goal
-import com.example.matchatodo.ui.theme.*
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.matchatodo.data.Goal
 import com.example.matchatodo.data.Task
+import com.example.matchatodo.ui.theme.*
 
 @Composable
 fun DashboardScreen(
     goals: List<Goal>,
     onNavigateToCreate: () -> Unit,
     onNavigateToActive: (String) -> Unit,
-    onNavigateToReward: (String) -> Unit,
     onDelete: (String) -> Unit
 ) {
     val completedCount = goals.count { it.isCompleted }
@@ -49,7 +48,11 @@ fun DashboardScreen(
             ) {
                 Icon(Icons.Default.Add, null, tint = White)
                 Spacer(Modifier.width(8.dp))
-                Text("Create New Goal", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Create New Goal",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -61,7 +64,7 @@ fun DashboardScreen(
                 .fillMaxSize()
         ) {
 
-            // --- HEADER ---
+            // ─── HEADER ───
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,7 +84,7 @@ fun DashboardScreen(
                 MatchaMascotIcon(Modifier.size(48.dp))
             }
 
-            // --- STATS ---
+            // ─── STATS ───
             Row(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -104,7 +107,7 @@ fun DashboardScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // --- GRID ---
+            // ─── GOALS GRID ───
             if (goals.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -123,10 +126,8 @@ fun DashboardScreen(
                         GoalCard(
                             goal = goal,
                             onClick = {
-                                if (goal.isCompleted)
-                                    onNavigateToReward(goal.id)
-                                else
-                                    onNavigateToActive(goal.id)
+                                // ✅ ALWAYS go to ActiveProgress
+                                onNavigateToActive(goal.id)
                             },
                             onDelete = { onDelete(goal.id) }
                         )
@@ -136,6 +137,8 @@ fun DashboardScreen(
         }
     }
 }
+
+/* ───────────────────────────── */
 
 @Composable
 fun StatBox(
@@ -173,6 +176,8 @@ fun StatBox(
     }
 }
 
+/* ───────────────────────────── */
+
 @Composable
 fun GoalCard(
     goal: Goal,
@@ -197,7 +202,7 @@ fun GoalCard(
     ) {
         Column {
 
-            // --- PROGRESS BAR ---
+            // Progress bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -238,7 +243,6 @@ fun GoalCard(
 
             Spacer(Modifier.weight(1f))
 
-            // --- DELETE (SUBTLE) ---
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = null,
@@ -251,6 +255,8 @@ fun GoalCard(
         }
     }
 }
+
+/* ───────────────────────────── */
 
 @Preview(showBackground = true, device = Devices.PIXEL_7)
 @Composable
@@ -281,8 +287,6 @@ fun DashboardScreenPreview() {
         goals = mockGoals,
         onNavigateToCreate = {},
         onNavigateToActive = {},
-        onNavigateToReward = {},
         onDelete = {}
     )
 }
-

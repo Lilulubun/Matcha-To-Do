@@ -30,7 +30,7 @@ fun ActiveProgressScreen(
     goal: Goal?,
     onBack: () -> Unit,
     onToggleTask: (String) -> Unit,
-    onGoalCompleted: () -> Unit
+    onGoalCompleted: (Goal) -> Unit
 ) {
     if (goal == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Loading...") }
@@ -38,7 +38,9 @@ fun ActiveProgressScreen(
     }
 
     LaunchedEffect(goal.isCompleted) {
-        if (goal.isCompleted) onGoalCompleted()
+        if (goal.isCompleted) {
+            onGoalCompleted(goal)
+        }
     }
 
     ActiveProgressContent(goal, onBack, onToggleTask)
